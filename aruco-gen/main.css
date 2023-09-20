@@ -1,0 +1,122 @@
+body {
+	font-family: sans-serif;
+	padding: 0;
+	margin: 0;
+}
+
+h1 {
+	font-weight: normal;
+	text-align: center;
+	font-size: 22px;
+	margin: 20px;
+	margin-bottom: 40px;
+}
+
+a {
+	color: #4761c7;
+	text-decoration: none;
+}
+
+.setup {
+	margin: 0 10px;
+}
+
+.setup input {
+	font-weight: 300;
+	margin: 0;
+	margin-left: 20px;
+	font-size: 15px;
+	padding: 2px;
+	width: 80px;
+	vertical-align: -1px;
+}
+
+.setup select {
+	font-weight: 300;
+	margin: 0;
+	margin-left: 20px;
+	font-size: 17px;
+	vertical-align: -1px;
+}
+
+.setup {
+	margin: 10px auto;
+	width: 550px;
+}
+
+.setup .field {
+	margin: 10px 0;
+}
+
+.setup label {
+	vertical-align: middle;
+	font-size: 15px;
+	width: 250px;
+	text-align: right;
+	display: inline-block;
+	color: #858585;
+}
+
+.tools {
+	margin-bottom: 20px;
+	text-align: center;
+	line-height: 20px;
+}
+
+.tools a {
+	font-weight: bold;
+}
+
+.marker {
+	text-align: center;
+	background: white;
+	display: inline-block;
+	font-size: 0;
+	border: #000000 1px solid;
+	/* margin: 40px; */
+}
+
+.multi-marker {
+	text-align: center;
+	background: white;
+	display: inline-block;
+	font-size: 0;
+	border: #000000 1px solid;
+}
+
+.batch-marker {
+	text-align: center;
+	background: white;
+	display: inline-block;
+	font-size: 0;
+}
+
+
+footer {
+	font-weight: normal;
+	margin: 20px;
+	margin-top: 60px;
+	text-align: right;
+	font-size: 13px;
+	color: #919191;
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+}
+
+@media print {
+	body {
+		-webkit-print-color-adjust: exact;
+		color-adjust: exact;
+		background: white;
+	}
+
+	body>* {
+		display: none;
+	}
+
+	.marker {
+		border: none !important;
+		display: block;
+	}
+}
