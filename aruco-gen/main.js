@@ -155,8 +155,6 @@ function generateMarkerSvg(width, height, bits, numOfOutsideH, numOfOutsideV, ou
 	return svg;
 }
 
-var dict;
-
 function generateArucoMarker(width, height, dictName, id,
 	numOfOutsideH, numOfOutsideV, outsideBlackCircleRadius,
 	insideBlackCircleRadius, insideWhiteCircleRadius, insideCenterCircleRadius, size, reverseCheck, opencvMarker, blackWhite) {
@@ -171,10 +169,11 @@ function generateArucoMarker(width, height, dictName, id,
 			bits.push((byte >> i) & 1);
 		}
 	}
-
 	return generateMarkerSvg(width, height, bits, numOfOutsideH, numOfOutsideV, outsideBlackCircleRadius,
 		insideBlackCircleRadius, insideWhiteCircleRadius, insideCenterCircleRadius, size, reverseCheck, opencvMarker, blackWhite);
 }
+
+var dict;
 
 // Fetch markers dict
 var loadDict = fetch('dict.json').then(function (res) {
@@ -189,13 +188,12 @@ var multiPdfButtonClick;
 const { jsPDF } = window.jspdf;
 var svgGroup = [];
 
-
-
 // UI
 var dictSelect = document.querySelector('.setup select[name=dict]');
 var markerIdInput = document.querySelector('.setup input[name=id]');
 var sizeInput = document.querySelector('.setup input[name=size]');
 var sideInput = document.querySelector('.setup input[name=side]');
+var opencvHidden = document.querySelector('.setup .opencv-hidden');
 
 var numOfOutsideHInput = document.querySelector('.setup input[name=num-outside-h]');
 var numOfOutsideVInput = document.querySelector('.setup input[name=num-outside-v]');
@@ -254,17 +252,25 @@ function saveAsJson(str, fileName) {
 	URL.revokeObjectURL(href); // 释放掉blob对象
 };
 
+var maxMarkerID = 999;
 
 function init() {
 	function updateMarker() {
 		pdfButton.removeEventListener('click', pdfButtonClick);
 		jsonButton.removeEventListener('click', jsonButtonClick);
+		var content = document.querySelector('.marker');
+
 		var markerId = Number(markerIdInput.value);
 		var size = Number(sizeInput.value);
 		var side = Number(sideInput.value);
 		var dictName = dictSelect.options[dictSelect.selectedIndex].value;
 		var width = Number(dictSelect.options[dictSelect.selectedIndex].getAttribute('data-width'));
 		var height = Number(dictSelect.options[dictSelect.selectedIndex].getAttribute('data-height'));
+		if (dictName == "3x3_32")
+			maxMarkerID = 31;
+		else
+			maxMarkerID = 999;
+		markerIdInput.setAttribute("max", maxMarkerID);
 
 		// 新参数
 		var numOfOutsideH = Number(numOfOutsideHInput.value);
@@ -277,8 +283,25 @@ function init() {
 		var blackWhite = blackWhiteCheckbox.checked;
 		var opencvMarker = opencvMarkerCheckbox.checked;
 
+		if (opencvMarker)
+			opencvHidden.style.display = "none";
+		else
+			opencvHidden.style.display = "block";
+
 		// Wait until dict data is loaded
 		loadDict.then(function () {
+
+			if (markerId > maxMarkerID) {
+				content.style.fontSize = "20px";
+				content.innerHTML = "ID 超出 MarkID 范围, ID 应小于等于" + maxMarkerID;
+				content.style.border = "0px";
+				return;
+			}
+
+			content.innerHTML = "";
+			content.style.fontSize = "0";
+			content.style.border = "#000000 1px solid";
+
 			// Generate marker
 			var svg = generateArucoMarker(width, height, dictName, markerId,
 				numOfOutsideH, numOfOutsideV, outsideBlackCircleRadius, insideBlackCircleRadius, insideWhiteCircleRadius, insideCenterCircleRadius,
@@ -309,7 +332,7 @@ function init() {
 			output.setAttribute('shape-rendering', 'geometricPrecision');
 			output.appendChild(svg);
 
-			document.querySelector('.marker').innerHTML = output.outerHTML;
+			content.innerHTML = output.outerHTML;
 
 			svgButton.setAttribute('href', 'data:image/svg;base64,' + btoa(output.outerHTML.replace('viewbox', 'viewBox')));
 			svgButton.setAttribute('download', dictName + '-' + markerId + '-' + numOfOutsideH + "-" + numOfOutsideV + '.svg');
@@ -319,15 +342,19 @@ function init() {
 					width += 2;
 					height += 2;
 				}
-				await downloadPDF(document.querySelector('.marker'),
+				await downloadPDF(content,
 					dictName, markerId, numOfOutsideH, numOfOutsideV,
 					size * (numOfOutsideH * 2 + width) + side * 2,
 					size * (numOfOutsideV * 2 + height) + side * 2);
 			}
 			jsonButtonClick = () => {
-				marker = new Marker(dictName, markerId, side, numOfOutsideH, numOfOutsideV, size,
-					outsideBlackCircleRadius, insideBlackCircleRadius, insideWhiteCircleRadius, insideCenterCircleRadius,
-					reverseCheck, blackWhite, opencvMarker);
+				if (opencvMarker)
+					marker = new OpenCVMarker(dictName, markerId, side, numOfOutsideH, numOfOutsideV, size,
+						outsideBlackCircleRadius, opencvMarker)
+				else
+					marker = new Marker(dictName, markerId, side, numOfOutsideH, numOfOutsideV, size,
+						outsideBlackCircleRadius, insideBlackCircleRadius, insideWhiteCircleRadius, insideCenterCircleRadius,
+						reverseCheck, blackWhite, opencvMarker);
 
 				saveAsJson(JSON.stringify(marker), dictName + '-' + markerId + '-' + numOfOutsideH + "-" + numOfOutsideV + '.json');
 			}
@@ -384,22 +411,23 @@ function init() {
 
 		// Wait until dict data is loaded
 		loadDict.then(function () {
-			if (begin + row * col > 1000) {
-				content.style.fontSize = "16px";
-				content.innerHTML = "起始ID + row * col 超出 MarkID范围";
+			if (begin + row * col > maxMarkerID + 1) {
+				content.style.fontSize = "20px";
+				content.innerHTML = "起始ID + row * col 超出 MarkID 范围, 起始ID + row * col 应小于等于" + (maxMarkerID + 1);
+				content.style.border = "0px";
 				return;
 			}
 
 			content.innerHTML = "";
 			content.style.fontSize = "0";
-
+			content.style.border = "#000000 1px solid";
 
 			var res = document.createElement('svg');
 			res.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 			res.setAttribute('shape-rendering', 'geometricPrecision');
 			if (opencvMarker) {
 				res.setAttribute('viewBox', '0 0 ' + (col * (width + 2 + 2 * numOfOutsideH) + (col - 1) * gapHPerSize + side / size * 2) + ' ' + (row * (height + 2 + 2 * numOfOutsideV) + (row - 1) * gapVPerSize + side / size * 2));
-				res.setAttribute('width', size * (col * (width + 2 + 2 * numOfOutsideH)) + (col - 1) * gapH + side * 2 + + 'mm');
+				res.setAttribute('width', size * (col * (width + 2 + 2 * numOfOutsideH)) + (col - 1) * gapH + side * 2 + 'mm');
 				res.setAttribute('height', size * (row * (numOfOutsideV * 2 + height + 2)) + (row - 1) * gapV + side * 2 + 'mm');
 			}
 			else {
@@ -437,7 +465,6 @@ function init() {
 
 			multiSvgButton.setAttribute('href', 'data:image/svg;base64,' + btoa(res.outerHTML.replace('viewbox', 'viewBox')));
 			multiSvgButton.setAttribute('download', dictName + '-' + "multi-" + begin + "-" + (begin + row * col) + '-' + numOfOutsideH + "-" + numOfOutsideV + '.svg');
-
 			content.innerHTML = res.outerHTML;
 			multiPdfButtonClick = async () => {
 				if (opencvMarker) {
@@ -499,67 +526,80 @@ function batchDownload(isDownloadSvg = false) {
 	var blackWhite = blackWhiteCheckbox.checked;
 	var opencvMarker = opencvMarkerCheckbox.checked;
 
+	startInput.setAttribute("max", maxMarkerID);
+	endInput.setAttribute("max", maxMarkerID + 1);
+
 	if (start >= end) {
-		content.style.fontSize = "16px";
-		content.innerHTML = "终止ID应大于起始ID";
+		content.style.fontSize = "20px";
+		content.innerHTML = "终止 ID 应大于起始 ID";
 		return;
 	}
-	else {
-		content.innerHTML = "";
-		content.style.fontSize = "0";
-		// Wait until dict data is loaded
-		loadDict.then(function () {
-			for (var i = start; i < end; ++i) {
-				// Generate marker
-				var svg = generateArucoMarker(width, height, dictName, i,
-					numOfOutsideH, numOfOutsideV, outsideBlackCircleRadius, insideBlackCircleRadius, insideWhiteCircleRadius, insideCenterCircleRadius,
-					size, reverseCheck, opencvMarker, blackWhite);
-
-				var output = document.createElement('svg');
-
-				if (opencvMarker) {
-					output.setAttribute('viewBox', '0 0 ' + (width + 2 * numOfOutsideH + 2 + side / size * 2) + ' ' + (height + 2 * numOfOutsideV + 2 + side / size * 2));
-					output.setAttribute('width', size * (numOfOutsideH * 2 + width + 2) + side * 2 + 'mm');
-					output.setAttribute('height', size * (numOfOutsideV * 2 + height + 2) + side * 2 + 'mm');
-
-					svg.setAttribute('x', side / size);
-					svg.setAttribute('y', side / size);
-					svg.setAttribute('width', width + 2 + 2 * numOfOutsideH);
-					svg.setAttribute('height', height + 2 + 2 * numOfOutsideV);
-				}
-				else {
-					output.setAttribute('viewBox', '0 0 ' + (width + 2 * numOfOutsideH + side / size * 2) + ' ' + (height + 2 * numOfOutsideV + side / size * 2));
-					output.setAttribute('width', size * (numOfOutsideH * 2 + width) + side * 2 + 'mm');
-					output.setAttribute('height', size * (numOfOutsideV * 2 + height) + side * 2 + 'mm');
-					svg.setAttribute('x', side / size);
-					svg.setAttribute('y', side / size);
-					svg.setAttribute('width', width + 2 * numOfOutsideH);
-					svg.setAttribute('height', height + 2 * numOfOutsideV);
-				}
-				output.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-				output.setAttribute('shape-rendering', 'geometricPrecision');
-				output.appendChild(svg);
-
-				if (!isDownloadSvg) {
-					content.innerHTML = output.outerHTML;
-					if (opencvMarker) {
-						width += 2;
-						height += 2;
-					}
-					downloadPDF(content,
-						dictName, i, numOfOutsideH, numOfOutsideV,
-						size * (numOfOutsideH * 2 + width) + side * 2,
-						size * (numOfOutsideV * 2 + height) + side * 2);
-				}
-				else {
-					batchSvgButton.setAttribute('href', 'data:image/svg;base64,' + btoa(svg.outerHTML.replace('viewbox', 'viewBox')));
-					batchSvgButton.setAttribute('download', dictName + '-' + i + '-' + numOfOutsideH + "-" + numOfOutsideV + '.svg');
-					batchSvgButton.click();
-				}
-			}
-			content.innerHTML = "";
-		})
+	if (start > maxMarkerID || end > maxMarkerID + 1) {
+		content.style.fontSize = "20px";
+		content.innerHTML = "ID 超出 MarkID 范围, 起始 ID 应小于等于" + maxMarkerID + ", 终止 ID 应小于等于" + (maxMarkerID + 1);
+		return;
 	}
+	if (end - start > 10) {
+		content.style.fontSize = "20px";
+		content.innerHTML = "建议批量下载个数不超过10个, 批量下载个数过多容易导致文件丢失";
+		return;
+	}
+
+	content.innerHTML = "";
+	content.style.fontSize = "0";
+	// Wait until dict data is loaded
+	loadDict.then(function () {
+		for (var i = start; i < end; ++i) {
+			// Generate marker
+			var svg = generateArucoMarker(width, height, dictName, i,
+				numOfOutsideH, numOfOutsideV, outsideBlackCircleRadius, insideBlackCircleRadius, insideWhiteCircleRadius, insideCenterCircleRadius,
+				size, reverseCheck, opencvMarker, blackWhite);
+
+			var output = document.createElement('svg');
+
+			if (opencvMarker) {
+				output.setAttribute('viewBox', '0 0 ' + (width + 2 * numOfOutsideH + 2 + side / size * 2) + ' ' + (height + 2 * numOfOutsideV + 2 + side / size * 2));
+				output.setAttribute('width', size * (numOfOutsideH * 2 + width + 2) + side * 2 + 'mm');
+				output.setAttribute('height', size * (numOfOutsideV * 2 + height + 2) + side * 2 + 'mm');
+
+				svg.setAttribute('x', side / size);
+				svg.setAttribute('y', side / size);
+				svg.setAttribute('width', width + 2 + 2 * numOfOutsideH);
+				svg.setAttribute('height', height + 2 + 2 * numOfOutsideV);
+			}
+			else {
+				output.setAttribute('viewBox', '0 0 ' + (width + 2 * numOfOutsideH + side / size * 2) + ' ' + (height + 2 * numOfOutsideV + side / size * 2));
+				output.setAttribute('width', size * (numOfOutsideH * 2 + width) + side * 2 + 'mm');
+				output.setAttribute('height', size * (numOfOutsideV * 2 + height) + side * 2 + 'mm');
+				svg.setAttribute('x', side / size);
+				svg.setAttribute('y', side / size);
+				svg.setAttribute('width', width + 2 * numOfOutsideH);
+				svg.setAttribute('height', height + 2 * numOfOutsideV);
+			}
+			output.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+			output.setAttribute('shape-rendering', 'geometricPrecision');
+			output.appendChild(svg);
+
+			if (!isDownloadSvg) {
+				content.innerHTML = output.outerHTML;
+				if (opencvMarker) {
+					width += 2;
+					height += 2;
+				}
+				downloadPDF(content,
+					dictName, i, numOfOutsideH, numOfOutsideV,
+					size * (numOfOutsideH * 2 + width) + side * 2,
+					size * (numOfOutsideV * 2 + height) + side * 2);
+			}
+			else {
+				batchSvgButton.setAttribute('href', 'data:image/svg;base64,' + btoa(svg.outerHTML.replace('viewbox', 'viewBox')));
+				batchSvgButton.setAttribute('download', dictName + '-' + i + '-' + numOfOutsideH + "-" + numOfOutsideV + '.svg');
+				batchSvgButton.click();
+			}
+		}
+		content.innerHTML = "";
+	})
+
 }
 
 batchPdfButton.addEventListener("click", () => batchDownload());

@@ -45,7 +45,7 @@ a {
 }
 
 .setup .field {
-	margin: 10px 0;
+	padding: 5px 0;
 }
 
 .setup label {
@@ -58,6 +58,7 @@ a {
 }
 
 .tools {
+	margin-top: 20px;
 	margin-bottom: 20px;
 	text-align: center;
 	line-height: 20px;
@@ -72,6 +73,7 @@ a {
 	background: white;
 	display: inline-block;
 	font-size: 0;
+	color: #ff0000;
 	border: #000000 1px solid;
 	/* margin: 40px; */
 }
@@ -81,6 +83,7 @@ a {
 	background: white;
 	display: inline-block;
 	font-size: 0;
+	color: #ff0000;
 	border: #000000 1px solid;
 }
 
@@ -89,6 +92,7 @@ a {
 	background: white;
 	display: inline-block;
 	font-size: 0;
+	color: #ff0000;
 }
 
 

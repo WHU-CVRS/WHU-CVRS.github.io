@@ -6,21 +6,21 @@
 	<meta name="description" content="Generate ArUco marker for printing with dictionary selection">
 	<meta name="keywords" content="ArUco, OpenCV, marker, generate, dictionary, print, computer vision, robotics">
 	<link rel="icon" type="image/png" href="favicon.png">
-	<title>Online ArUco Markers Generator</title>
+	<title>圆点标定板在线生成器</title>
 </head>
 
 <body>
-	<h1>ArUco Markers Generator!</h1>
+	<h1>圆点标定板在线生成器</h1>
 	<form class="setup">
 		<div class="field">
 			<label for="frm-dict">Dictionary:</label>
 			<select name="dict" id="frm-dict">
 				<optgroup label="Standard dictionaries">
-					<!-- <option value="aruco" data-width="5" data-height="5">Original ArUco</option> -->
-					<option selected value="4x4_1000" data-width="4" data-height="4">4x4 (50, 100, 250, 1000)</option>
-					<option value="5x5_1000" data-width="5" data-height="5">5x5 (50, 100, 250, 1000)</option>
-					<option value="6x6_1000" data-width="6" data-height="6">6x6 (50, 100, 250, 1000)</option>
-					<option value="7x7_1000" data-width="7" data-height="7">7x7 (50, 100, 250, 1000)</option>
+					<option value="3x3_32" data-width="3" data-height="3"> 3x3 </option>
+					<option selected value="4x4_1000" data-width="4" data-height="4"> 4x4 </option>
+					<option value="5x5_1000" data-width="5" data-height="5"> 5x5 </option>
+					<option value="6x6_1000" data-width="6" data-height="6"> 6x6 </option>
+					<option value="7x7_1000" data-width="7" data-height="7"> 7x7 </option>
 				</optgroup>
 			</select>
 		</div>
@@ -49,28 +49,30 @@
 			<input id="frm-outside-black-circle-radius" name="outside-black-circle-radius" type="number" min="0"
 				max="50" value="5">
 		</div>
-		<div class="field">
-			<label for="frm-inside-black-circle-radius">编码区域圆点外围黑色圈的半径, mm:</label>
-			<input id="frm-inside-black-circle-radius" name="inside-black-circle-radius" type="number" min="0" max="50"
-				value="5">
-		</div>
-		<div class="field">
-			<label for="frm-inside-white-circle-radius">编码区域圆点中心白色圈的半径, mm:</label>
-			<input id="frm-inside-white-circle-radius" name="inside-white-circle-radius" type="number" min="0" max="50"
-				value="4">
-		</div>
-		<div class="field">
-			<label for="frm-inside-center-circle-radius">编码区域圆点中心最小黑圆点半径, mm:</label>
-			<input id="frm-inside-center-circle-radius" name="inside-center-circle-radius" type="number" min="0"
-				max="50" value="1.5">
-		</div>
-		<div class="field">
-			<label for="frm-color-reverse">中心区域颜色翻转</label>
-			<input id="frm-color-reverse" type="checkbox" name="checkbox">
-		</div>
-		<div class="field">
-			<label for="frm-color-reverse">黑白翻转</label>
-			<input id="frm-bw-reverse" type="checkbox" name="bw">
+		<div class="opencv-hidden">
+			<div class="field">
+				<label for="frm-inside-black-circle-radius">编码区域圆点外围黑色圈的半径, mm:</label>
+				<input id="frm-inside-black-circle-radius" name="inside-black-circle-radius" type="number" min="0" max="50"
+					value="5">
+			</div>
+			<div class="field">
+				<label for="frm-inside-white-circle-radius">编码区域圆点中心白色圈的半径, mm:</label>
+				<input id="frm-inside-white-circle-radius" name="inside-white-circle-radius" type="number" min="0" max="50"
+					value="4">
+			</div>
+			<div class="field">
+				<label for="frm-inside-center-circle-radius">编码区域圆点中心最小黑圆点半径, mm:</label>
+				<input id="frm-inside-center-circle-radius" name="inside-center-circle-radius" type="number" min="0"
+					max="50" value="1.5">
+			</div>
+			<div class="field">
+				<label for="frm-color-reverse">中心区域颜色翻转</label>
+				<input id="frm-color-reverse" type="checkbox" name="checkbox">
+			</div>
+			<div class="field">
+				<label for="frm-color-reverse">黑白翻转</label>
+				<input id="frm-bw-reverse" type="checkbox" name="bw">
+			</div>
 		</div>
 		<div class="field">
 			<label for="frm-opencv">OpenCV Marker</label>
