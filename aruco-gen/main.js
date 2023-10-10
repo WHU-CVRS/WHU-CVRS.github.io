@@ -104,8 +104,6 @@ function generateMarkerSvg(width, height, bits, numOfOutsideH, numOfOutsideV, ou
 		rect.setAttribute('fill', whiteColor);
 		svg.appendChild(rect);
 
-
-
 		// "Pixels"
 		for (var i = 0; i < height; i++) {
 			for (var j = 0; j < width; j++) {
@@ -185,6 +183,7 @@ var loadDict = fetch('dict.json').then(function (res) {
 var pdfButtonClick;
 var jsonButtonClick;
 var multiPdfButtonClick;
+var multiJsonButtonClick;
 const { jsPDF } = window.jspdf;
 var svgGroup = [];
 
@@ -205,7 +204,6 @@ var reverseCheckbox = document.querySelector('.setup input[name=checkbox]');
 var opencvMarkerCheckbox = document.querySelector('.setup input[name=opencv]');
 var blackWhiteCheckbox = document.querySelector('.setup input[name=bw]');
 
-
 var svgButton = document.querySelector('.svg-button');
 var pdfButton = document.querySelector('.pdf-button');
 var jsonButton = document.querySelector('.json-button');
@@ -217,6 +215,7 @@ var gapVInput = document.querySelector('.setup input[name=gapV]');
 var beginInput = document.querySelector('.setup input[name=begin]');
 var multiPdfButton = document.querySelector('.multi-pdf-button');
 var multiSvgButton = document.querySelector('.multi-svg-button');
+var multiJsonButton = document.querySelector('.multi-json-button');
 
 
 var startInput = document.querySelector('.setup input[name=start]');
@@ -253,6 +252,7 @@ function saveAsJson(str, fileName) {
 };
 
 var maxMarkerID = 999;
+var language = true;
 
 function init() {
 	function updateMarker() {
@@ -290,10 +290,12 @@ function init() {
 
 		// Wait until dict data is loaded
 		loadDict.then(function () {
-
 			if (markerId > maxMarkerID) {
 				content.style.fontSize = "20px";
-				content.innerHTML = "ID 超出 MarkID 范围, ID 应小于等于" + maxMarkerID;
+				if(language)
+					content.innerHTML = "ID Out of Marker ID range. ID should be less than or equal to " + maxMarkerID + ".";
+				else
+					content.innerHTML = "ID 超出 Marker ID 范围, ID 应小于等于" + maxMarkerID;
 				content.style.border = "0px";
 				return;
 			}
@@ -355,8 +357,8 @@ function init() {
 					marker = new Marker(dictName, markerId, side, numOfOutsideH, numOfOutsideV, size,
 						outsideBlackCircleRadius, insideBlackCircleRadius, insideWhiteCircleRadius, insideCenterCircleRadius,
 						reverseCheck, blackWhite, opencvMarker);
-
-				saveAsJson(JSON.stringify(marker), dictName + '-' + markerId + '-' + numOfOutsideH + "-" + numOfOutsideV + '.json');
+				json = {"metaBoard": marker}
+				saveAsJson(JSON.stringify(json), dictName + '-' + markerId + '-' + numOfOutsideH + "-" + numOfOutsideV + '.json');
 			}
 			pdfButton.addEventListener('click', pdfButtonClick);
 			jsonButton.addEventListener('click', jsonButtonClick);
@@ -381,6 +383,7 @@ function init() {
 
 	function randomGroupMarker() {
 		multiPdfButton.removeEventListener('click', multiPdfButtonClick);
+		multiJsonButton.removeEventListener('click', multiJsonButtonClick);
 		var content = document.querySelector('.multi-marker');
 		svgGroup = [];
 
@@ -413,7 +416,10 @@ function init() {
 		loadDict.then(function () {
 			if (begin + row * col > maxMarkerID + 1) {
 				content.style.fontSize = "20px";
-				content.innerHTML = "起始ID + row * col 超出 MarkID 范围, 起始ID + row * col 应小于等于" + (maxMarkerID + 1);
+				if(language)
+					content.innerHTML = "(Start ID + Rows * Columns) Out of Marker ID range. (Start ID + Rows * Columns) should be less than or equal to " + (maxMarkerID + 1) + ".";
+				else
+					content.innerHTML = "起始ID + row * col 超出 Marker ID 范围, 起始ID + row * col 应小于等于" + (maxMarkerID + 1);
 				content.style.border = "0px";
 				return;
 			}
@@ -477,7 +483,21 @@ function init() {
 					size * (row * (numOfOutsideV * 2 + height)) + (row - 1) * gapV + side * 2,
 				);
 			}
+			multiJsonButtonClick = () => {
+				multi = new MultiMarker(begin, row, col, gapH, gapV)
+				if (opencvMarker)
+					marker = new OpenCVMarker(dictName, begin, side, numOfOutsideH, numOfOutsideV, size,
+						outsideBlackCircleRadius, opencvMarke, multi)
+				else
+					marker = new Marker(dictName, begin, side, numOfOutsideH, numOfOutsideV, size,
+						outsideBlackCircleRadius, insideBlackCircleRadius, insideWhiteCircleRadius, insideCenterCircleRadius,
+						reverseCheck, blackWhite, opencvMarker, multi);
+				json = {"metaBoard": marker}
+				saveAsJson(JSON.stringify(json), dictName + '-' + begin + '-' + row + "-" + col + '.json');
+			}
+
 			multiPdfButton.addEventListener('click', multiPdfButtonClick);
+			multiJsonButton.addEventListener('click', multiJsonButtonClick);
 		})
 	}
 
@@ -531,17 +551,26 @@ function batchDownload(isDownloadSvg = false) {
 
 	if (start >= end) {
 		content.style.fontSize = "20px";
-		content.innerHTML = "终止 ID 应大于起始 ID";
+		if(language)
+			content.innerHTML = "End ID should be greater than Start ID.";
+		else
+			content.innerHTML = "终止 ID 应大于起始 ID";
 		return;
 	}
 	if (start > maxMarkerID || end > maxMarkerID + 1) {
 		content.style.fontSize = "20px";
-		content.innerHTML = "ID 超出 MarkID 范围, 起始 ID 应小于等于" + maxMarkerID + ", 终止 ID 应小于等于" + (maxMarkerID + 1);
+		if(language)
+			content.innerHTML = "ID out of Marker ID range. Start ID Should be less than or equal to " + maxMarkerID + ", End ID Should be less than or equal to " + (maxMarkerID + 1) + ".";
+		else
+			content.innerHTML = "ID 超出 Marker ID 范围, 起始 ID 应小于等于" + maxMarkerID + ", 终止 ID 应小于等于" + (maxMarkerID + 1);
 		return;
 	}
 	if (end - start > 10) {
 		content.style.fontSize = "20px";
-		content.innerHTML = "建议批量下载个数不超过10个, 批量下载个数过多容易导致文件丢失";
+		if(language)
+			content.innerHTML = "A maximum of 10 files can be downloaded in batches, Beacuse excessive batch downloads can easily lead to file loss.";
+		else
+			content.innerHTML = "建议批量下载个数不超过10个, 批量下载个数过多容易导致文件丢失";
 		return;
 	}
 
@@ -604,3 +633,12 @@ function batchDownload(isDownloadSvg = false) {
 
 batchPdfButton.addEventListener("click", () => batchDownload());
 batchControlButton.addEventListener("click", () => batchDownload(true));
+
+
+// language control
+// var languageCheckbox = document.querySelector('.language input[name=language]');
+// languageCheckbox.addEventListener('change', changeLanguage);
+// function changeLanguage(){
+// 	language = !languageCheckbox.checked;
+// }
+

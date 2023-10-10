@@ -12,14 +12,26 @@ h1 {
 	margin-bottom: 40px;
 }
 
+.language {
+	margin: 10px auto;
+	width: 550px;
+	text-align: right;
+	font-size: 20px;
+}
+
+.language input {
+	width: 16px;
+	height: 16px;
+}
+
 a {
 	color: #4761c7;
 	text-decoration: none;
 }
 
-.setup {
+/* .setup {
 	margin: 0 10px;
-}
+} */
 
 .setup input {
 	font-weight: 300;

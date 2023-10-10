@@ -6,14 +6,20 @@
 	<meta name="description" content="Generate ArUco marker for printing with dictionary selection">
 	<meta name="keywords" content="ArUco, OpenCV, marker, generate, dictionary, print, computer vision, robotics">
 	<link rel="icon" type="image/png" href="favicon.png">
-	<title>圆点标定板在线生成器</title>
+	<!-- <title>圆点标定板在线生成器</title> -->
+	<title>Dot Calibration Board Online Generator</title>
 </head>
 
 <body>
-	<h1>圆点标定板在线生成器</h1>
+	<!-- <h1>圆点标定板在线生成器</h1> -->
+	<h1 class="title">Dot Calibration Board Online Generator</h1>
+	<!-- <div class="language">
+		<label for="frm-language">CN</label>
+		<input id="frm-language" type="checkbox" name="language">
+	</div> -->
 	<form class="setup">
 		<div class="field">
-			<label for="frm-dict">Dictionary:</label>
+			<label for="frm-dict">Dictionary</label>
 			<select name="dict" id="frm-dict">
 				<optgroup label="Standard dictionaries">
 					<option value="3x3_32" data-width="3" data-height="3"> 3x3 </option>
@@ -25,52 +31,63 @@
 			</select>
 		</div>
 		<div class="field">
-			<label for="frm-id">Marker随机ID:</label>
+			<!-- <label for="frm-id">Marker随机ID</label> -->
+			<label for="frm-id" class="id">Marker ID</label>
 			<input id="frm-id" name="id" type="number" min="0" max="999" value="0">
 		</div>
 		<div class="field">
-			<label for="frm-side">外边框, mm:</label>
+			<!-- <label for="frm-side">外边框, mm</label> -->
+			<label for="frm-side">Margin, mm</label>
 			<input id="frm-side" name="side" type="number" min="0" max="1000" value="20">
 		</div>
 		<div class="field">
-			<label for="frm-num-outside-h">中心编码区外的圈数(水平)</label>
+			<!-- <label for="frm-num-outside-h">外部编码区圆点的圈数(水平)</label> -->
+			<label for="frm-num-outside-h">Horizontal Rounds of Outer Circle</label>
 			<input id="frm-num-outside-h" name="num-outside-h" type="number" min="1" max="5" value="1">
 		</div>
 		<div class="field">
-			<label for="frm-num-outside-v">中心编码区外的圈数(垂直)</label>
+			<!-- <label for="frm-num-outside-h">外部编码区圆点的圈数(垂直)</label> -->
+			<label for="frm-num-outside-v">Vertical Rounds of Outer Circle</label>
 			<input id="frm-num-outside-v" name="num-outside-v" type="number" min="1" max="5" value="1">
 		</div>
 		<div class="field">
-			<label for="frm-size">整个Marker中的小Grid的大小, mm:</label>
+			<!-- <label for="frm-size">整个Marker中的小Grid的大小, mm</label> -->
+			<label for="frm-size">Grid Size, mm</label>
 			<input id="frm-size" name="size" type="number" min="10" max="200" value="20">
 		</div>
 		<div class="field">
-			<label for="frm-outside-black-circle-radius">外围黑色圆点的半径, mm:</label>
+			<!-- <label for="frm-outside-black-circle-radius">外围黑色圆点的半径, mm</label> -->
+			<label for="frm-outside-black-circle-radius">Radius of Outer Circle, mm</label>
 			<input id="frm-outside-black-circle-radius" name="outside-black-circle-radius" type="number" min="0"
 				max="50" value="5">
 		</div>
 		<div class="opencv-hidden">
 			<div class="field">
-				<label for="frm-inside-black-circle-radius">编码区域圆点外围黑色圈的半径, mm:</label>
+				<!-- <label for="frm-inside-black-circle-radius">编码区域圆点外围黑色圈的半径, mm</label> -->
+				<label for="frm-inside-black-circle-radius">Radius of Inner Large Circle, mm</label>
 				<input id="frm-inside-black-circle-radius" name="inside-black-circle-radius" type="number" min="0" max="50"
 					value="5">
 			</div>
 			<div class="field">
-				<label for="frm-inside-white-circle-radius">编码区域圆点中心白色圈的半径, mm:</label>
+				<!-- <label for="frm-inside-white-circle-radius">编码区域圆点中心白色圈的半径, mm</label> -->
+				<label for="frm-inside-white-circle-radius">Radius of Inner Medium Circle, mm</label>
 				<input id="frm-inside-white-circle-radius" name="inside-white-circle-radius" type="number" min="0" max="50"
 					value="4">
 			</div>
 			<div class="field">
-				<label for="frm-inside-center-circle-radius">编码区域圆点中心最小黑圆点半径, mm:</label>
+				<!-- <label for="frm-inside-center-circle-radius">编码区域圆点中心最小黑圆点半径, mm</label> -->
+				<label for="frm-inside-center-circle-radius">Radius of Inner Small Circle, mm</label>
 				<input id="frm-inside-center-circle-radius" name="inside-center-circle-radius" type="number" min="0"
 					max="50" value="1.5">
 			</div>
 			<div class="field">
-				<label for="frm-color-reverse">中心区域颜色翻转</label>
+				<!-- <label for="frm-color-reverse">中心区域颜色翻转</label> -->
+				<label for="frm-color-reverse">Reverse Inner Coding Region Color</label>
 				<input id="frm-color-reverse" type="checkbox" name="checkbox">
 			</div>
 			<div class="field">
-				<label for="frm-color-reverse">黑白翻转</label>
+				<!-- <label for="frm-color-reverse">黑白翻转</label> -->
+				<label for="frm-color-reverse">Reverse Black-White </label>
 				<input id="frm-bw-reverse" type="checkbox" name="bw">
 			</div>
 		</div>
@@ -84,32 +101,39 @@
 		<div class="marker"></div>
 	</div>
 
-
 	<div class="tools">
-		以 <a href="" class="svg-button">SVG</a> 、
+		<!-- 以 <a href="" class="svg-button">SVG</a>, 
 		<a href="javascript:void(0);" class="pdf-button">PDF</a> 或者 
-		<a href="javascript:void(0);" class="json-button">JSON</a> 的形式保存 Marker
+		<a href="javascript:void(0);" class="json-button">JSON</a> 的形式保存 Marker -->
+		Save Marker Info as <a href="" class="svg-button">SVG</a>, 
+		<a href="javascript:void(0);" class="pdf-button">PDF</a> or 
+		<a href="javascript:void(0);" class="json-button">JSON</a>.
 	</div>
 
 	<form class="setup">
 		<div class="field">
-			<label for="frm-begin">起始ID</label>
+			<!-- <label for="frm-begin">起始ID</label> -->
+			<label for="frm-begin">Start ID</label>
 			<input id="frm-begin" name="begin" type="number" min="0" max="999" value="0">
 		</div>
 		<div class="field">
-			<label for="frm-row">打印行数</label>
+			<!-- <label for="frm-row">打印行数</label> -->
+			<label for="frm-row">Rows</label>
 			<input id="frm-row" name="row" type="number" min="1" max="50" value="1">
 		</div>
 		<div class="field">
-			<label for="frm-col">打印列数</label>
+			<!-- <label for="frm-col">打印列数</label> -->
+			<label for="frm-col">Columns</label>
 			<input id="frm-col" name="col" type="number" min="1" max="50" value="2">
 		</div>
 		<div class="field">
-			<label for="frm-gapH">水平间距, mm</label>
+			<!-- <label for="frm-gapH">水平间距, mm</label> -->
+			<label for="frm-gapH">Horizontal Spacing, mm</label>
 			<input id="frm-gapH" name="gapH" type="number" min="0" max="100" value="10">
 		</div>
 		<div class="field">
-			<label for="frm-gapV">垂直间距, mm</label>
+			<!-- <label for="frm-gapV">垂直间距, mm</label> -->
+			<label for="frm-gapV">Vertical Spacing, mm</label>
 			<input id="frm-gapV" name="gapV" type="number" min="0" max="100" value="10">
 		</div>
 	</form>
@@ -119,17 +143,22 @@
 	</div>
 
 	<div class="tools">
-		以 <a href="" class="multi-svg-button">SVG</a> 或者
-		<a href="javascript:void(0);" class="multi-pdf-button">PDF</a> 的形式保存 Marker
+		<!-- 以 <a href="" class="multi-svg-button">SVG</a> 或者
+		<a href="javascript:void(0);" class="multi-pdf-button">PDF</a> 的形式保存 Marker -->
+		Save Marker Info as <a href="" class="multi-svg-button">SVG</a>,  
+		<a href="javascript:void(0);" class="multi-pdf-button">PDF</a> or 
+		<a href="javascript:void(0);" class="multi-json-button">JSON</a>.
 	</div>
 
 	<form class="setup">
 		<div class="field">
-			<label for="frm-start">起始ID</label>
+			<!-- <label for="frm-start">起始ID</label> -->
+			<label for="frm-start">Start ID</label>
 			<input id="frm-start" name="start" type="number" min="0" max="999" value="0">
 		</div>
 		<div class="field">
-			<label for="frm-end">终止ID</label>
+			<!-- <label for="frm-end">终止ID</label> -->
+			<label for="frm-end">End ID</label>
 			<input id="frm-end" name="end" type="number" min="1" max="1000" value="1">
 		</div>
 	</form>
@@ -139,9 +168,12 @@
 	</div>
 
 	<div class="tools">
-		以 <a href="javascript:void(0);" class="batch-control-button">SVG</a>
+		<!-- 以 <a href="javascript:void(0);" class="batch-control-button">SVG</a>
 		<a href="javascript:void(0);" class="batch-svg-button"></a> 或者
-		<a href="javascript:void(0);" class="batch-pdf-button">PDF</a> 的形式保存 Marker
+		<a href="javascript:void(0);" class="batch-pdf-button">PDF</a> 的形式保存 Marker -->
+		Save Marker Info as <a href="javascript:void(0);" class="batch-control-button">SVG</a>
+		<a href="javascript:void(0);" class="batch-svg-button"></a> or
+		<a href="javascript:void(0);" class="batch-pdf-button">PDF</a>.
 	</div>
 
 	<script src="libs/jspdf.umd.min.js"></script>
