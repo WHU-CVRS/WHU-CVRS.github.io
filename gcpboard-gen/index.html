@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link rel="stylesheet" href="main.css" />
+	<link rel="icon" type="image/png" href="favicon.png">
+	<title>GCP-Board Online Generator</title>
+</head>
+
+<body>
+	<h1 class="title">GCP-Board Online Generator</h1>
+	<form class="setup">
+		<div class="field">
+			<label for="frm-margin">Margin, mm</label>
+			<input id="frm-margin" name="margin" type="number" min="0" max="1000" value="15">
+		</div>
+		<div class="field">
+			<label for="frm-clcd">CenterLargeCircleDiameter, mm</label>
+			<input id="frm-clcd" name="clcd" type="number" min="0" max="10000" value="280">
+		</div>
+		<div class="field">
+			<label for="frm-cmcd">CenterSmallCircleDiameter, mm</label>
+			<input id="frm-cmcd" name="cscd" type="number" min="0" max="10000" value="240">
+		</div>
+		<div class="field">
+			<label for="frm-olcd">OuterLargeCircleDiameter, mm</label>
+			<input id="frm-olcd" name="olcd" type="number" min="0" max="10000" value="60">
+		</div>
+		<div class="field">
+			<label for="frm-oscd">OuterSmallCircleDiameter, mm</label>
+			<input id="frm-oscd" name="oscd" type="number" min="0"max="10000" value="50">
+		</div>
+		<div class="field">
+			<label for="frm-ocd">OuterCenterDiameter, mm</label>
+			<input id="frm-ocd" name="ocd" type="number" min="0"max="10000" value="150">
+		</div>
+	</form>
+	<div style="text-align: center;">
+		<div class="marker"></div>
+	</div>
+
+	<div class="tools">
+		Save Marker Info as <a href="" class="svg-button">SVG</a>, 
+		<a href="javascript:void(0);" class="pdf-button">PDF</a> or 
+		<a href="javascript:void(0);" class="json-button">JSON</a>.
+	</div>
+
+	<script src="libs/jspdf.umd.min.js"></script>
+	<script src="libs/svg2pdf.umd.min.js"></script>
+	<script src="marker.js"></script>
+	<script src="main.js"></script>
+</body>
+
+</html>
