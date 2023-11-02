@@ -634,11 +634,3 @@ function batchDownload(isDownloadSvg = false) {
 batchPdfButton.addEventListener("click", () => batchDownload());
 batchControlButton.addEventListener("click", () => batchDownload(true));
 
-
-// language control
-// var languageCheckbox = document.querySelector('.language input[name=language]');
-// languageCheckbox.addEventListener('change', changeLanguage);
-// function changeLanguage(){
-// 	language = !languageCheckbox.checked;
-// }
-
