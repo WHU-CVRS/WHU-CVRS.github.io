@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link rel="stylesheet" href="main.css" />
+	<link rel="icon" type="image/png" href="favicon.png">
+	<title>April-Board Online Generator</title>
+</head>
+
+<body>
+	<h1 class="title">April-Board Online Generator</h1>
+	<form class="setup">
+		<div class="field">
+			<label for="frm-family">AprilTagFamily</label>
+			<select name="family" id="frm-family">
+				<optgroup label="April Tag Family">
+					<option selected value="t16h5"> t16h5 </option>
+					<option value="t25h7"> t25h7 </option>
+					<option value="t25h9"> t25h9 </option>
+					<option value="t36h9"> t36h9 </option>
+					<option value="t36h11"> t36h11 </option>
+				</optgroup>
+			</select>
+		</div>
+		<div class="field">
+			<label for="frm-margin">Margin, mm</label>
+			<input id="frm-margin" name="margin" type="number" min="0" max="1000" value="30">
+		</div>
+		<div class="field">
+			<label for="frm-id">StartID</label>
+			<input id="frm-id" name="id" type="number" min="0" max="10" value="0">
+		</div>
+		<div class="field">
+			<label for="frm-nx">Cols</label>
+			<input id="frm-nx" name="nx" type="number" min="0" max="10" value="3">
+		</div>
+		<div class="field">
+			<label for="frm-ny">Rows</label>
+			<input id="frm-ny" name="ny" type="number" min="0" max="10" value="3">
+		</div>
+		<div class="field">
+			<label for="frm-size">tSize, mm</label>
+			<input id="frm-size" name="size" type="number" min="0" max="1000" value="200">
+		</div>
+		<div class="field">
+			<label for="frm-space">tSpace, (0-1)</label>
+			<input id="frm-space" name="space" type="number" min="0" max="1" value="0.3">
+		</div>
+	</form>
+	<div style="text-align: center;">
+		<div class="marker"></div>
+	</div>
+
+	<div class="tools">
+		Save Marker Info as <a href="" class="svg-button">SVG</a>, 
+		<a href="javascript:void(0);" class="pdf-button">PDF</a> or 
+		<a href="javascript:void(0);" class="json-button">JSON</a>.
+	</div>
+
+	<script src="libs/jspdf.umd.min.js"></script>
+	<script src="libs/svg2pdf.umd.min.js"></script>
+	<script src="marker.js"></script>
+	<script src="april_tag.js"></script>
+	<script src="main.js"></script>
+</body>
+
+</html>
