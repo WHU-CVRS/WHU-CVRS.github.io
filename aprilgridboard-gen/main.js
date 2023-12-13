@@ -1,7 +1,7 @@
 var pdfButtonClick;
 var jsonButtonClick;
 const { jsPDF } = window.jspdf;
-
+// 9d477181b   
 async function downloadPDF(element, fileName, width, height) {
 	var pdf = new jsPDF({
 		unit: 'mm',
@@ -54,12 +54,11 @@ function generateAprilTag(position, metricSize, tagSpacing, tagID, tagFamililyDa
     // Get the tag code
     let tagCode;
     try {
-        tagCode = tagFamililyData.tagCodes[tagID];
+        tagCode = BigInt(tagFamililyData.tagCodes[tagID]);
     } catch (error) {
         console.error(`[ERROR]: Requested tag ID of ${tagID} not available in the ${tagFamililyData.chosenTagFamiliy}`);
         return svg;
     }
-
     // Calculate the bit size of the tag
     const sqrtBits = Math.sqrt(tagFamililyData.totalBits);
     const bitSquareSize = metricSize / (sqrtBits + borderBits * 2);
@@ -81,13 +80,16 @@ function generateAprilTag(position, metricSize, tagSpacing, tagID, tagFamililyDa
     const codeMatrix = Array.from({ length: sqrtBits }, () => Array(sqrtBits).fill(0));
 
     // Populate the code matrix
-    for (let i = 0; i < sqrtBits; i++) {
-        for (let j = 0; j < sqrtBits; j++) {
-            if (!(tagCode & (1 << (sqrtBits * i + j)))) {
-                codeMatrix[i][j] = 1;
-            }
-        }
-    }
+	// 初始化一个二维数组 codeMatrix，用于表示标记位的矩阵
+	for (let i = 0; i < sqrtBits; i++) {
+		for (let j = 0; j < sqrtBits; j++) {
+			// 检查 tagCode 中的特定位是否为零
+			if (!(tagCode & (BigInt(1) << BigInt(sqrtBits * i + j)))) {
+				// 如果特定位为零，将 codeMatrix 中对应位置的元素设置为1
+				codeMatrix[i][j] = 1;
+			}
+		}
+	}
 
     // Bits
     for (let i = 0; i < sqrtBits; i++) {
