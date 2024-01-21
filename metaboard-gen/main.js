@@ -233,7 +233,7 @@ async function downloadPDF(element, dictName, markerId, numOfOutsideH, numOfOuts
 		orientation: width > height ? 'l' : 'p',
 	});
 	await pdf.svg(element.firstElementChild);
-	pdf.save(dictName + '-' + markerId + '-' + numOfOutsideH + "-" + numOfOutsideV + '.pdf');
+	pdf.save(width + "mm_x_" + height + "mm-" + dictName + '-' + markerId + '-' + numOfOutsideH + "-" + numOfOutsideV + '.pdf');
 
 }
 
@@ -292,7 +292,7 @@ function init() {
 		loadDict.then(function () {
 			if (markerId > maxMarkerID) {
 				content.style.fontSize = "20px";
-				if(language)
+				if (language)
 					content.innerHTML = "ID Out of Marker ID range. ID should be less than or equal to " + maxMarkerID + ".";
 				else
 					content.innerHTML = "ID 超出 Marker ID 范围, ID 应小于等于" + maxMarkerID;
@@ -336,14 +336,17 @@ function init() {
 
 			content.innerHTML = output.outerHTML;
 
+			if (opencvMarker) {
+				width += 2;
+				height += 2;
+			}
+
 			svgButton.setAttribute('href', 'data:image/svg;base64,' + btoa(output.outerHTML.replace('viewbox', 'viewBox')));
-			svgButton.setAttribute('download', dictName + '-' + markerId + '-' + numOfOutsideH + "-" + numOfOutsideV + '.svg');
+			svgButton.setAttribute('download', (size * (numOfOutsideH * 2 + width) + side * 2) +
+				"mm_x_" + (size * (numOfOutsideV * 2 + height) + side * 2) + "mm-" +
+				dictName + '-' + markerId + '-' + numOfOutsideH + "-" + numOfOutsideV + '.svg');
 
 			pdfButtonClick = async () => {
-				if (opencvMarker) {
-					width += 2;
-					height += 2;
-				}
 				await downloadPDF(content,
 					dictName, markerId, numOfOutsideH, numOfOutsideV,
 					size * (numOfOutsideH * 2 + width) + side * 2,
@@ -357,8 +360,9 @@ function init() {
 					marker = new Marker(dictName, markerId, side, numOfOutsideH, numOfOutsideV, size,
 						outsideBlackCircleRadius, insideBlackCircleRadius, insideWhiteCircleRadius, insideCenterCircleRadius,
 						reverseCheck, blackWhite, opencvMarker);
-				json = {"metaBoard": marker}
-				saveAsJson(JSON.stringify(json), dictName + '-' + markerId + '-' + numOfOutsideH + "-" + numOfOutsideV + '.json');
+				json = { "metaBoard": marker }
+				saveAsJson(JSON.stringify(json), (size * (numOfOutsideH * 2 + width) + side * 2) +
+					"mm_x_" + (size * (numOfOutsideV * 2 + height) + side * 2) + "mm-" + dictName + '-' + markerId + '-' + numOfOutsideH + "-" + numOfOutsideV + '.json');
 			}
 			pdfButton.addEventListener('click', pdfButtonClick);
 			jsonButton.addEventListener('click', jsonButtonClick);
@@ -416,7 +420,7 @@ function init() {
 		loadDict.then(function () {
 			if (begin + row * col > maxMarkerID + 1) {
 				content.style.fontSize = "20px";
-				if(language)
+				if (language)
 					content.innerHTML = "(Start ID + Rows * Columns) Out of Marker ID range. (Start ID + Rows * Columns) should be less than or equal to " + (maxMarkerID + 1) + ".";
 				else
 					content.innerHTML = "起始ID + row * col 超出 Marker ID 范围, 起始ID + row * col 应小于等于" + (maxMarkerID + 1);
@@ -469,14 +473,17 @@ function init() {
 				}
 			}
 
+			if (opencvMarker) {
+				width += 2;
+				height += 2;
+			}
+
 			multiSvgButton.setAttribute('href', 'data:image/svg;base64,' + btoa(res.outerHTML.replace('viewbox', 'viewBox')));
-			multiSvgButton.setAttribute('download', dictName + '-' + "multi-" + begin + "-" + (begin + row * col) + '-' + numOfOutsideH + "-" + numOfOutsideV + '.svg');
+			multiSvgButton.setAttribute('download', (size * (col * (width + 2 * numOfOutsideH)) + (col - 1) * gapH + side * 2) + "mm_x_" +
+				(size * (row * (numOfOutsideV * 2 + height)) + (row - 1) * gapV + side * 2) + "mm-" +
+				dictName + '-' + "multi-" + begin + "-" + (begin + row * col) + '-' + numOfOutsideH + "-" + numOfOutsideV + '.svg');
 			content.innerHTML = res.outerHTML;
 			multiPdfButtonClick = async () => {
-				if (opencvMarker) {
-					width += 2;
-					height += 2;
-				}
 				await downloadPDF(content,
 					dictName, "multi-" + begin + "-" + (begin + row * col), numOfOutsideH, numOfOutsideV,
 					size * (col * (width + 2 * numOfOutsideH)) + (col - 1) * gapH + side * 2,
@@ -487,13 +494,14 @@ function init() {
 				multi = new MultiMarker(begin, row, col, gapH, gapV)
 				if (opencvMarker)
 					marker = new OpenCVMarker(dictName, begin, side, numOfOutsideH, numOfOutsideV, size,
-						outsideBlackCircleRadius, opencvMarke, multi)
+						outsideBlackCircleRadius, opencvMarker, multi)
 				else
 					marker = new Marker(dictName, begin, side, numOfOutsideH, numOfOutsideV, size,
 						outsideBlackCircleRadius, insideBlackCircleRadius, insideWhiteCircleRadius, insideCenterCircleRadius,
 						reverseCheck, blackWhite, opencvMarker, multi);
-				json = {"metaBoard": marker}
-				saveAsJson(JSON.stringify(json), dictName + '-' + begin + '-' + row + "-" + col + '.json');
+				json = { "metaBoard": marker }
+				saveAsJson(JSON.stringify(json), (size * (col * (width + 2 * numOfOutsideH)) + (col - 1) * gapH + side * 2) + "mm_x_" +
+					(size * (row * (numOfOutsideV * 2 + height)) + (row - 1) * gapV + side * 2) + "mm-" + dictName + '-' + "multi-" + begin + "-" + (begin + row * col) + '-' + numOfOutsideH + "-" + numOfOutsideV + '.json');
 			}
 
 			multiPdfButton.addEventListener('click', multiPdfButtonClick);
@@ -551,7 +559,7 @@ function batchDownload(isDownloadSvg = false) {
 
 	if (start >= end) {
 		content.style.fontSize = "20px";
-		if(language)
+		if (language)
 			content.innerHTML = "End ID should be greater than Start ID.";
 		else
 			content.innerHTML = "终止 ID 应大于起始 ID";
@@ -559,7 +567,7 @@ function batchDownload(isDownloadSvg = false) {
 	}
 	if (start > maxMarkerID || end > maxMarkerID + 1) {
 		content.style.fontSize = "20px";
-		if(language)
+		if (language)
 			content.innerHTML = "ID out of Marker ID range. Start ID Should be less than or equal to " + maxMarkerID + ", End ID Should be less than or equal to " + (maxMarkerID + 1) + ".";
 		else
 			content.innerHTML = "ID 超出 Marker ID 范围, 起始 ID 应小于等于" + maxMarkerID + ", 终止 ID 应小于等于" + (maxMarkerID + 1);
@@ -567,7 +575,7 @@ function batchDownload(isDownloadSvg = false) {
 	}
 	if (end - start > 10) {
 		content.style.fontSize = "20px";
-		if(language)
+		if (language)
 			content.innerHTML = "A maximum of 10 files can be downloaded in batches, Beacuse excessive batch downloads can easily lead to file loss.";
 		else
 			content.innerHTML = "建议批量下载个数不超过10个, 批量下载个数过多容易导致文件丢失";
@@ -608,21 +616,23 @@ function batchDownload(isDownloadSvg = false) {
 			output.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 			output.setAttribute('shape-rendering', 'geometricPrecision');
 			output.appendChild(svg);
-
+			tempWidth = width;
+			tempHeight = height;
+			if (opencvMarker) {
+				tempWidth += 2;
+				tempHeight += 2;
+			}
 			if (!isDownloadSvg) {
 				content.innerHTML = output.outerHTML;
-				if (opencvMarker) {
-					width += 2;
-					height += 2;
-				}
 				downloadPDF(content,
 					dictName, i, numOfOutsideH, numOfOutsideV,
-					size * (numOfOutsideH * 2 + width) + side * 2,
-					size * (numOfOutsideV * 2 + height) + side * 2);
+					size * (numOfOutsideH * 2 + tempWidth) + side * 2,
+					size * (numOfOutsideV * 2 + tempHeight) + side * 2);
 			}
 			else {
-				batchSvgButton.setAttribute('href', 'data:image/svg;base64,' + btoa(svg.outerHTML.replace('viewbox', 'viewBox')));
-				batchSvgButton.setAttribute('download', dictName + '-' + i + '-' + numOfOutsideH + "-" + numOfOutsideV + '.svg');
+				batchSvgButton.setAttribute('href', 'data:image/svg;base64,' + btoa(output.outerHTML.replace('viewbox', 'viewBox')));
+				batchSvgButton.setAttribute('download', (size * (numOfOutsideH * 2 + tempWidth) + side * 2) + "mm_x_" +
+					(size * (numOfOutsideV * 2 + tempHeight) + side * 2) + "mm-" + dictName + '-' + i + '-' + numOfOutsideH + "-" + numOfOutsideV + '.svg');
 				batchSvgButton.click();
 			}
 		}
