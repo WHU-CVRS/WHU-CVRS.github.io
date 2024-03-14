@@ -131,7 +131,7 @@ function generateAprilBoard(margin, startID, nCols, nRows, tagSize, tagSpace, ta
 	for (y = 0; y < nRows; y++) {
 		for (x = 0; x < nCols; x++) {
 			id = startID + nCols * y + x
-			let pos = [margin + x * (1 + tagSpace) * tagSize, margin + y * (1 + tagSpace) * tagSize];
+			let pos = [margin + x * (1 + tagSpace) * tagSize, margin + (nRows - y - 1) * (1 + tagSpace) * tagSize];
 			const tagSvg = generateAprilTag(pos, tagSize, tagSpace, id, tagFamilyData);
 			svgBoard.appendChild(tagSvg);
 		}
