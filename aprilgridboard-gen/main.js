@@ -86,7 +86,7 @@ function generateAprilTag(position, metricSize, tagSpacing, tagID, tagFamililyDa
 			// 检查 tagCode 中的特定位是否为零
 			if (!(tagCode & (BigInt(1) << BigInt(sqrtBits * i + j)))) {
 				// 如果特定位为零，将 codeMatrix 中对应位置的元素设置为1
-				codeMatrix[i][j] = 1;
+				codeMatrix[i][sqrtBits - j - 1] = 1;
 			}
 		}
 	}
