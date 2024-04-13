@@ -9,6 +9,7 @@ async function downloadPDF(element, fileName, width, height) {
 		floatPrecision: 'smart',
 		orientation: width > height ? 'l' : 'p',
 	});
+	console.log(element);
 	await pdf.svg(element);
 	pdf.save(fileName);
 }
@@ -122,9 +123,9 @@ function generateAprilBoard(margin, startID, nCols, nRows, tagSize, tagSpace, ta
     const svgBoard = document.createElement("svg");
 	svgBoard.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 	svgBoard.setAttribute('shape-rendering', 'geometricPrecision');
-    svgBoard.setAttribute("viewBox", `0 0 ${2 * margin + (1 + 2 * tagSpace) * tagSize + (nCols - 1) * (1 + tagSpace) * tagSize} ${2 * margin + (1 + 2 * tagSpace) * tagSize + (nRows - 1) * (1 + tagSpace) * tagSize}`);
+    svgBoard.setAttribute("viewBox", `0 0 ${2 * margin + (1 + 2 * tagSpace) * tagSize + (nCols - 1) * (1 + tagSpace) * tagSize} ${2 * margin + 30 + (1 + 2 * tagSpace) * tagSize + (nRows - 1) * (1 + tagSpace) * tagSize}`);
     svgBoard.setAttribute("width", 2 * margin + (1 + 2 * tagSpace) * tagSize + (nCols - 1) * (1 + tagSpace) * tagSize);
-    svgBoard.setAttribute("height", 2 * margin + (1 + 2 * tagSpace) * tagSize + (nRows - 1) * (1 + tagSpace) * tagSize);
+    svgBoard.setAttribute("height", 2 * margin + 30 + (1 + 2 * tagSpace) * tagSize + (nRows - 1) * (1 + tagSpace) * tagSize);
 	
 
 	numTags = nCols * nRows
@@ -137,6 +138,73 @@ function generateAprilBoard(margin, startID, nCols, nRows, tagSize, tagSpace, ta
 		}
 	}
 
+	// Axias
+	// <svg width="15" height="15">
+	// <line x1="1.5" y1="13.5" x2="13.5" y2="13.5" stroke="black" stroke-width="2"/>
+	// <polygon points="13.5,13.5 13.0,13.0 13.0,14.0" fill="black"/>
+	// <line x1="1.5" y1="13.5" x2="1.5" y2="1.5" stroke="black" stroke-width="2"/>
+	// <polygon points="1.5,1.5 1.0,2.5 2.0,2.5" fill="black"/>
+	// </svg>
+
+	let linex = document.createElement("line");
+	linex.setAttribute("x1", 5);
+	linex.setAttribute("y1", 2 * margin + (1 + 2 * tagSpace) * tagSize + (nRows - 1) * (1 + tagSpace) * tagSize + 25);
+	linex.setAttribute("x2", 25);
+	linex.setAttribute("y2", 2 * margin + (1 + 2 * tagSpace) * tagSize + (nRows - 1) * (1 + tagSpace) * tagSize + 25);	
+	linex.setAttribute("stroke", "red");
+	linex.setAttribute("stroke-width", "1");
+	svgBoard.appendChild(linex);
+
+	let liney = document.createElement("line");
+	liney.setAttribute("x1", 5);
+	liney.setAttribute("y1", 2 * margin + (1 + 2 * tagSpace) * tagSize + (nRows - 1) * (1 + tagSpace) * tagSize + 5);
+	liney.setAttribute("x2", 5);
+	liney.setAttribute("y2", 2 * margin + (1 + 2 * tagSpace) * tagSize + (nRows - 1) * (1 + tagSpace) * tagSize + 25);	
+	liney.setAttribute("stroke", "green");
+	liney.setAttribute("stroke-width", "1");
+	svgBoard.appendChild(liney);
+
+	let arrowx = document.createElement("polygon");
+	arrowx.setAttribute("points", `22.0,${2 * margin + (1 + 2 * tagSpace) * tagSize + (nRows - 1) * (1 + tagSpace) * tagSize + 22} 
+	28.0,${2 * margin + (1 + 2 * tagSpace) * tagSize + (nRows - 1) * (1 + tagSpace) * tagSize + 25} 
+	22.0,${2 * margin + (1 + 2 * tagSpace) * tagSize + (nRows - 1) * (1 + tagSpace) * tagSize + 28}`);
+	arrowx.setAttribute("fill", "red");
+	svgBoard.appendChild(arrowx);
+
+	let arrowy = document.createElement("polygon");
+	arrowy.setAttribute("points", `2.0,${2 * margin + (1 + 2 * tagSpace) * tagSize + (nRows - 1) * (1 + tagSpace) * tagSize + 8} 
+	5.0,${2 * margin + (1 + 2 * tagSpace) * tagSize + (nRows - 1) * (1 + tagSpace) * tagSize + 2} 
+	8.0,${2 * margin + (1 + 2 * tagSpace) * tagSize + (nRows - 1) * (1 + tagSpace) * tagSize + 8}`);
+	arrowy.setAttribute("fill", "green");
+	svgBoard.appendChild(arrowy);
+
+	let textx = document.createElement("text");
+	textx.setAttribute("x", 21);
+	textx.setAttribute("y", 2 * margin + (1 + 2 * tagSpace) * tagSize + (nRows - 1) * (1 + tagSpace) * tagSize + 21);
+	textx.setAttribute("font-size", "8");
+	textx.setAttribute("fill", "red");
+	textx.setAttribute("font-family", "Arial");
+	textx.innerHTML = "x";
+	svgBoard.appendChild(textx);
+
+	let texty = document.createElement("text");
+	texty.setAttribute("x", 8);
+	texty.setAttribute("y", 2 * margin + (1 + 2 * tagSpace) * tagSize + (nRows - 1) * (1 + tagSpace) * tagSize + 8);
+	texty.setAttribute("font-size", "8");
+	texty.setAttribute("fill", "green");
+	texty.setAttribute("font-family", "Arial");
+	texty.innerHTML = "y";
+	svgBoard.appendChild(texty);
+
+	// Text
+	let text =document.createElement("text");
+	text.setAttribute("x", 30);
+	text.setAttribute("y", 2 * margin + (1 + 2 * tagSpace) * tagSize + (nRows - 1) * (1 + tagSpace) * tagSize + 20);
+	text.setAttribute("font-size", "12");
+	text.setAttribute("font-family", "Arial");
+	let caption = `startID=${startID}, ${nCols}x${nRows} tags, size=${tagSize / 10.0}cm, spacing=${tagSpace * tagSize / 10.0}cm(ratio: ${tagSpace})`;
+	text.innerHTML = caption;
+	svgBoard.appendChild(text);
 	return svgBoard;
 }
 
@@ -174,7 +242,8 @@ function init() {
 		content.innerHTML = aprilboard.outerHTML;
 
 		width = 2 * margin + (1 + 2 * space) * size + (nx - 1) * (1 + space) * size
-		height = 2 * margin + (1 + 2 * space) * size + (ny - 1) * (1 + space) * size
+		height = 2 * margin + 30 + (1 + 2 * space) * size + (ny - 1) * (1 + space) * size
+		
 		svgButton.setAttribute('href', 'data:image/svg;base64,' + btoa(aprilboard.outerHTML.replace('viewbox', 'viewBox').replace(`width="${width}"`, `width="${width}mm"`).replace(`height="${height}"`, `height="${height}mm"`)));
 		svgButton.setAttribute('download', aprilFamily + '-' + margin + '-' + nx + "-" + ny + "-" + size + "-" + space + '.svg');
 
@@ -186,6 +255,7 @@ function init() {
 			svgPDF.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
 			svgPDF.setAttribute('shape-rendering', 'geometricPrecision');
 			svgPDF.appendChild(aprilboard);
+			console.log(aprilboard)
 			await downloadPDF(svgPDF,
 				aprilFamily + '-' + margin + '-' + nx + "-" + ny + "-" + size + "-" + space + '.pdf', 
 				width, height
